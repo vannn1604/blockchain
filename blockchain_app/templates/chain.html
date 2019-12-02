@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block messages %}
+    {% include 'adminlte/lib/_messages.html' %}
+    {% if response.message %}
+        <div class="alert alert-success alert-dismissible fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong> {{ response.message }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary" id="new-block">New Block</button>
+        <button type="button" class="btn btn-primary" id="new-tran" data-toggle="modal" data-target="#myModal">New Transaction</button>
+        <button type="button" class="btn btn-primary" id="update">Update Blockchain</button>
+    </div>
+    <br/>
+    <br/>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Index</th>
+                        <th>Timestamp</th>
+                        <th>Transactions</th>
+                        <th>Proof</th>
+                        <th>Previous_hash</th>
+                    </tr>  
+                </thead>
+                <tbody>
+                    {% for block in response.chain %}
+                        <tr>
+                            <td>{{ block.index }}</td>
+                            <td>{{ block.timestamp }}</td>
+                            <td>
+                                <ul>
+                                    <li>Senser: {{ block.transactions.0.sender }}</li>
+                                    <li>Recipient: {{ block.transactions.0.recipient }}</li>
+                                    <li>Amount: {{ block.transactions.0.amount }}</li>
+                                </ul>
+                            </td>
+                            <td>{{ block.proof }}</td>
+                            <td>{{ block.previous_hash }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">New Transaction</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="email">Sender:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="email" placeholder="Enter sender" name="sender" required>
+                            </div>
+                        </div>
+                            <div class="form-group">
+                            <label class="control-label col-sm-2" for="pwd">Recipient:</label>
+                            <div class="col-sm-10">          
+                                <input type="text" class="form-control" id="pwd" placeholder="Enter recipient" name="recipient" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="emaill">Amount:</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="emaill" placeholder="Enter amount" name="amount" required>
+                            </div>
+                        </div>
+                        <div class="form-group">        
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="button" class="btn btn-primary" id="post-tran">Submit</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+{% include 'adminlte/lib/_scripts.html' %}
+    <script>
+        $(document).ready(function(){
+            $("#new-block").click(function(){
+                $.get("/mine", function(data, status){
+                    window.location.reload(); 
+                });
+            });
+            $("#post-tran").click(function(){        
+                $.post("/transactions/new", $("form").serialize(), function(data, status) {
+                    alert(data.message);
+                    if (data.message != "Missing value.")
+                        window.location.reload(); 
+                });
+            });
+            $("#update").click(function(){
+                $.get("/nodes/resolve", function(data, status){
+                    alert(data.message);
+                    window.location.reload(); 
+                });
+            });
+        });
+    </script>
+{% endblock %}
