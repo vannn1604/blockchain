@@ -37,11 +37,13 @@
                             <td>{{ block.index }}</td>
                             <td>{{ block.timestamp }}</td>
                             <td>
-                                <ul>
-                                    <li>Senser: {{ block.transactions.0.sender }}</li>
-                                    <li>Recipient: {{ block.transactions.0.recipient }}</li>
-                                    <li>Amount: {{ block.transactions.0.amount }}</li>
-                                </ul>
+                                {% for transaction in block.transactions %}
+                                    <ul>
+                                        <li>Senser: {{ transaction.sender }}</li>
+                                        <li>Recipient: {{ transaction.recipient }}</li>
+                                        <li>Amount: {{ transaction.amount }}</li>
+                                    </ul>
+                                {% endfor %}
                             </td>
                             <td>{{ block.proof }}</td>
                             <td>{{ block.previous_hash }}</td>

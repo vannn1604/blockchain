@@ -6,6 +6,7 @@ from django.views import View
 from utils.blockchain import Blockchain
 
 blockchain = Blockchain()
+# Generate a globally unique address for this node
 node_identifier = str(uuid4()).replace("-", "")
 
 
@@ -23,8 +24,7 @@ def mine(request):
     # Forge the new Block by adding it to the chain
     previous_hash = blockchain.hash(last_block)
     blockchain.new_block(proof, previous_hash)
-    response = {"message": "New Block Forged"}
-    return JsonResponse(response, status=200)
+    return JsonResponse({"message": "New Block Forged"}, status=200)
 
 
 """

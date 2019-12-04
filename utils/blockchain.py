@@ -18,14 +18,14 @@ class Blockchain:
     def register_node(self, address):
         """
         Add a new node to the list of nodes
-        :param address: Address of node. Eg. 'http://192.168.0.5:5000'
+        :param address: Address of node. Eg. 'http://127.0.0.1:8000'
         """
 
         parsed_url = urlparse(address)
         if parsed_url.netloc:
             self.nodes.add(parsed_url.netloc)
         elif parsed_url.path:
-            # Accepts an URL without scheme like '192.168.0.5:5000'.
+            # Accepts an URL without scheme like '127.0.0.1:8000'.
             self.nodes.add(parsed_url.path)
         else:
             raise ValueError("Invalid URL")
